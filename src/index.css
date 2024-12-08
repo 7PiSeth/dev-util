@@ -1,0 +1,48 @@
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins&family=Raleway:wght@300;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Poppins", sans-serif;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+  }
+  body {
+    @apply light-mode dark:dark-mode select-none;
+  }
+  input, textarea {
+    @apply w-full py-3 outline-none px-5 rounded-full 
+    text-black dark:text-white bg-[rgb(244,246,248)] dark:bg-[#282C34]
+    text-2xl font-medium
+  }
+  .social-link>a{
+    @apply mx-3 md:mx-5 md:hover:opacity-70
+  }
+}
+
+@layer components {
+  .dark-mode {
+    @apply bg-[rgb(13,17,23)] text-slate-300;
+  }
+  .light-mode {
+    @apply bg-[rgb(255,255,255)] text-black;
+  }
+  .t-g {
+    @apply inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#4ca5ff] to-[#b673f8];
+  }
+  .t-g2 {
+    @apply inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#0f2027] to-[#2c5364];
+  }
+  .bg-primary {
+    @apply bg-gradient-to-r from-cyan-500 to-blue-500;
+  }
+  button {
+    @apply active:scale-150 duration-100 
+    text-xl px-3 py-1 
+    rounded-lg bg-primary text-white;
+  }
+}
