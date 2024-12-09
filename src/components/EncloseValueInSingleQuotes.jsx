@@ -49,7 +49,7 @@ const handleCopyToClipboard = () => {
     className="relative flex flex-col items-center">
       <label className="absolute -top-10 left-10 flex gap-4">
         <LuQuote size={30}/>
-        Enclose value in single quotes
+        Enclose value in single quotes. regular expression (^\w.*\w$) replaced by '$1',
       </label>
       {/* Notification display */}
       {notification && (
