@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { LuQuote } from "react-icons/lu";
+import { FcNext } from "react-icons/fc";
+import { Link } from "react-router-dom";
 
 const EncloseValueInSingleQuotes = () => {
   const [inputText, setInputText] = useState(""); // Stores raw input
@@ -8,16 +10,16 @@ const EncloseValueInSingleQuotes = () => {
 
   const formatText = (input) => {
     if (!input) {
-      return ''; // Return an empty string if input is null or empty
+      return ""; // Return an empty string if input is null or empty
     }
-  
+
     return input
       .split("\n")
       .map((line) => {
         const trimmedLine = line.trim();
         return trimmedLine ? `'${trimmedLine}'` : null; // Only add quotes if the line is not empty
       })
-      .filter(line => line !== null) // Filter out any null values (empty lines)
+      .filter((line) => line !== null) // Filter out any null values (empty lines)
       .join(",\n"); // Join with commas and newlines
   };
 
@@ -27,29 +29,33 @@ const EncloseValueInSingleQuotes = () => {
     setFormattedText(formatText(input)); // Update formatted text
   };
 
-// Copy formatted text to clipboard and show notification
-const handleCopyToClipboard = () => {
-  if (formattedText && formattedText.trim() !== "") {
-    navigator.clipboard.writeText(formattedText);
-    setNotification("Copied successfully✔️");
-    setTimeout(() => setNotification(""), 1000); // Clear notification after 1 second
-  } else {
-    setNotification("No text to copy❌");
-    setTimeout(() => setNotification(""), 1000); // Clear notification after 1 second
-  }
-};
+  // Copy formatted text to clipboard and show notification
+  const handleCopyToClipboard = () => {
+    if (formattedText && formattedText.trim() !== "") {
+      navigator.clipboard.writeText(formattedText);
+      setNotification("Copied successfully✔️");
+      setTimeout(() => setNotification(""), 1000); // Clear notification after 1 second
+    } else {
+      setNotification("No text to copy❌");
+      setTimeout(() => setNotification(""), 1000); // Clear notification after 1 second
+    }
+  };
 
   // Count the number of lines in the input text
-  const lineCount = inputText.trim().split("\n").filter(line => line.trim()).length;
+  const lineCount = inputText
+    .trim()
+    .split("\n")
+    .filter((line) => line.trim()).length;
 
   return (
-    <div 
-    data-aos="fade-up"
-    data-aos-offset="100"
-    className="relative flex flex-col items-center">
+    <div
+      data-aos="fade-right"
+      data-aos-offset="100"
+      className="relative flex flex-col items-center"
+    >
       <label className="absolute -top-10 left-10 flex gap-4 select-text">
-        <LuQuote size={30}/>
-        Enclose value in single quotes. regular expression (^\w.*\w$) replaced by '$1',
+        <LuQuote size={30} />
+        Enclose value in single quotes
       </label>
       {/* Notification display */}
       {notification && (
@@ -67,15 +73,24 @@ const handleCopyToClipboard = () => {
           placeholder="Input a list, separated by line breaks"
           autoFocus
         />
-        
-        {/* Label displaying line count */}
-        <label className="mt-2 text-center">
-          Items Count: <p className="text-xl">{lineCount}</p>
-        </label>
-
+        <div className="flex flex-col items-center justify-center gap-7">
+          {/* Label displaying line count */}
+          <label className="mt-2 text-center">
+            Items count: <p className="text-xl">{lineCount}</p>
+          </label>
+          <Link
+            to="/ExtractInformationFromQRCode"
+            // class="bg-white bg-opacity-5 rounded-2xl p-6 flex flex-col items-center group relative overflow-hidden transition duration-700 ease-in-out border-transparent border-2 hover:border-white dark:hover:bg-opacity-20 hover:bg-opacity-25 active:scale-105 active:duration-100"
+          >
+            <FcNext
+              className="rounded-lg text-sm border border-transparent cursor-pointer hover:border-blue-500 hover:shadow-md transition-all active:scale-125 duration-200"
+              size={40}
+            />
+          </Link>
+        </div>
         {/* Formatted output textarea with hover effect */}
         <textarea
-          className="rounded-lg text-sm w-[45%] h-[85vh] border border-transparent cursor-pointer hover:border-blue-500 hover:shadow-md transition-all active:scale-105 duration-300"
+          className="rounded-lg text-sm w-[45%] h-[85vh] border border-transparent cursor-pointer hover:border-blue-500 hover:shadow-md transition-all active:scale-150 duration-500"
           value={formattedText}
           readOnly // Make this textarea read-only
           placeholder="Result"

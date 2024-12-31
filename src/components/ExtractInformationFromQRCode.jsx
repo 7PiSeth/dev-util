@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { BsQrCodeScan } from "react-icons/bs";
+import { FcPrevious } from "react-icons/fc";
+import { Link } from "react-router-dom";
 const { BakongKHQR } = require("bakong-khqr");
-
 
 const ExtractInformationFromQRCode = () => {
   const [inputText, setInputText] = useState(""); // Stores raw input
@@ -11,55 +12,57 @@ const ExtractInformationFromQRCode = () => {
   // Format the input text into the desired output format
   const formatText = (input) => {
     if (!input.trim()) {
-        // Return early if input is empty or contains only whitespace
-        return "";
+      // Return early if input is empty or contains only whitespace
+      return "";
     }
 
     let result = "";
     const lines = input.split("\n"); // Split the input into lines
 
     lines.forEach((line) => {
-        const [hash, qrString] = line.split("\t"); // Split each line into hash and QR string
+      const [hash, qrString] = line.split("\t"); // Split each line into hash and QR string
 
-        // If qrString is empty or null, use "null" value for the QR string data
-        if (!hash) return; // Skip lines without a hash
+      // If qrString is empty or null, use "null" value for the QR string data
+      if (!hash) return; // Skip lines without a hash
 
-        let txnType = "null";
-        let accountId = "null";
-        let merchantName = "null";
-        let merchantCity = "null";
-        let bankName = "null";
+      let txnType = "null";
+      let accountId = "null";
+      let merchantName = "null";
+      let merchantCity = "null";
+      let bankName = "null";
 
-        if (qrString && qrString.trim()) {
-            try {
-                const data = BakongKHQR.decode(qrString).data; // Decode QR string
+      if (qrString && qrString.trim()) {
+        try {
+          const data = BakongKHQR.decode(qrString).data; // Decode QR string
 
-                if (data.merchantType === "30") {
-                    txnType = "Merchant Payment";
-                } else if (data.acquiringBank === "CASHOUT") {
-                    txnType = "CASHOUT";
-                } else {
-                    txnType = "Personal KHQR";
-                }
+          if (data.merchantType === "30") {
+            txnType = "Merchant Payment";
+          } else if (data.acquiringBank === "CASHOUT") {
+            txnType = "CASHOUT";
+          } else {
+            txnType = "Personal KHQR";
+          }
 
-                accountId = data.merchantType === "30" ? data.merchantID : data.accountInformation;
-                merchantName = data.merchantName || "null";
-                merchantCity = data.merchantCity || "null";
-                bankName = getBankName(data.bakongAccountID) || "null";
-
-            } catch (error) {
-                console.error("Error processing line:", line, error); // Log errors for debugging
-            }
+          accountId =
+            data.merchantType === "30"
+              ? data.merchantID
+              : data.accountInformation;
+          merchantName = data.merchantName || "null";
+          merchantCity = data.merchantCity || "null";
+          bankName = getBankName(data.bakongAccountID) || "null";
+        } catch (error) {
+          console.error("Error processing line:", line, error); // Log errors for debugging
         }
+      }
 
-        const strHash = hash.substring(0, 8); // Extract first 8 characters of hash
+      const strHash = hash.substring(0, 8); // Extract first 8 characters of hash
 
-        result += `${strHash}\t${txnType}\t${bankName}\t${accountId}\t${merchantName}\t${merchantCity}\n`;
+      result += `${strHash}\t${txnType}\t${bankName}\t${accountId}\t${merchantName}\t${merchantCity}\n`;
     });
 
     return result;
-};
-  
+  };
+
   // Retrieve the bank name based on the card number
   const getBankName = (cardNum) => {
     const bankList = {
@@ -117,28 +120,32 @@ const ExtractInformationFromQRCode = () => {
   };
 
   // Copy formatted text to clipboard and show notification
-// Copy formatted text to clipboard and show notification
-const handleCopyToClipboard = () => {
-  if (formattedText && formattedText.trim() !== "") {
-    navigator.clipboard.writeText(formattedText);
-    setNotification("Copied successfully✔️");
-    setTimeout(() => setNotification(""), 1000); // Clear notification after 1 second
-  } else {
-    setNotification("No text to copy❌");
-    setTimeout(() => setNotification(""), 1000); // Clear notification after 1 second
-  }
-};
+  // Copy formatted text to clipboard and show notification
+  const handleCopyToClipboard = () => {
+    if (formattedText && formattedText.trim() !== "") {
+      navigator.clipboard.writeText(formattedText);
+      setNotification("Copied successfully✔️");
+      setTimeout(() => setNotification(""), 1000); // Clear notification after 1 second
+    } else {
+      setNotification("No text to copy❌");
+      setTimeout(() => setNotification(""), 1000); // Clear notification after 1 second
+    }
+  };
 
   // Count the number of non-empty lines in the input text
-  const lineCount = inputText.trim().split("\n").filter((line) => line.trim()).length;
+  const lineCount = inputText
+    .trim()
+    .split("\n")
+    .filter((line) => line.trim()).length;
 
   return (
-    <div 
-    data-aos="fade-up"
-    data-aos-offset="100"
-    className="relative flex flex-col items-center">
+    <div
+      data-aos="fade-left"
+      data-aos-offset="100"
+      className="relative flex flex-col items-center"
+    >
       <label className="absolute -top-10 left-10 flex gap-4">
-        <BsQrCodeScan size={30}/>
+        <BsQrCodeScan size={30} />
         Extract information from QR code
       </label>
       {/* Notification display */}
@@ -158,10 +165,21 @@ const handleCopyToClipboard = () => {
           autoFocus
         />
 
-        {/* Label displaying line count */}
-        <label className="mt-2 text-center">
-          Items Count: <p className="text-xl">{lineCount}</p>
-        </label>
+        <div className="flex flex-col items-center justify-center gap-7">
+          {/* Label displaying line count */}
+          <label className="mt-2 text-center">
+            Items count: <p className="text-xl">{lineCount}</p>
+          </label>
+          <Link
+            to="/EncloseValueInSingleQuotes"
+            // class="bg-white bg-opacity-5 rounded-2xl p-6 flex flex-col items-center group relative overflow-hidden transition duration-700 ease-in-out border-transparent border-2 hover:border-white dark:hover:bg-opacity-20 hover:bg-opacity-25 active:scale-105 active:duration-100"
+          >
+            <FcPrevious
+              className="rounded-lg text-sm border border-transparent cursor-pointer hover:border-blue-500 hover:shadow-md transition-all active:scale-125 duration-200"
+              size={40}
+            />
+          </Link>
+        </div>
 
         {/* Formatted output textarea */}
         <textarea
